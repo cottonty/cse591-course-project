@@ -46,7 +46,7 @@
 
 	--
 
-	EmitProbMatrix by statistical method
+	EmitProbMatrix: by statistical method
 		P(Observed[i]|Status[j])
 
 
@@ -54,11 +54,11 @@
 ###2. Dataset
 
 	A large set of addresses in Chinese
-	
+
 	Can be used for building standarized address database and geocoding
 
 
-###3. How to obtain statistics of parameters
+###3. How to obtain parameters
 
 	THULAC
 
