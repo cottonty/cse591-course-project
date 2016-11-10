@@ -2,52 +2,52 @@
 
 Title: Chinese word segmentation with HMM
 
-1. Basic Idea:
+##1. Basic Idea:
 
 	Viterbi Algorithm
 	Observed Sequence -> Status Sequence
 
---
+	--
 
-HMM Setting
-{
-	StatusSet, 
-	ObservedSet, 
-	TransProbMatrix, 
-	EmitProbMatrix, 
-	InitStatus
-}
+	###HMM Setting
+	{
+		StatusSet, 
+		ObservedSet, 
+		TransProbMatrix, 
+		EmitProbMatrix, 
+		InitStatus
+	}
 
---
+	--
 
-StatusSet:
-{
-	B: appear at the begin of a word
-	M: appear at middle of a word
-	E: appear at the end of a word
-	S: single char as a word
-}
+	###StatusSet:
+	{
+		B: appear at the begin of a word
+		M: appear at middle of a word
+		E: appear at the end of a word
+		S: single char as a word
+	}
 
-Some Constriction:
-	B -> M|E
-	M -> M|E
-	E -> B|S
-	S -> B|S
+	###Some Constriction:
+		B -> M|E
+		M -> M|E
+		E -> B|S
+		S -> B|S
 
---
+	--
 
-InitStatus:
-	Prob, or log(prob)
+	###InitStatus:
+		Prob, or log(prob)
 
---
+	--
 
-TransProbMatrix: by statistical method
-	P(Status[i]|Status[i-1]) 
+	###TransProbMatrix: by statistical method
+		P(Status[i]|Status[i-1]) 
 
---
+	--
 
-EmitProbMatrix by statistical method
-	P(Observed[i]|Status[j])
+	###EmitProbMatrix by statistical method
+		P(Observed[i]|Status[j])
 
 
 
