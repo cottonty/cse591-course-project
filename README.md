@@ -75,7 +75,8 @@
 
 ###5. Comparation to other word seperation methods
 
-	TBD
+		1. CRF
+		2. Others, TBD
 
 
 ###6. Reference:
