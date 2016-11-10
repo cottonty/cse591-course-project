@@ -1,15 +1,15 @@
 # CSE591-Course-Project Proposal
 
-Title: Chinese word segmentation with HMM
+##Title: Chinese word segmentation with HMM
 
-##1. Basic Idea:
+###1. Basic Idea:
 
 	Viterbi Algorithm
 	Observed Sequence -> Status Sequence
 
 	--
 
-	###HMM Setting
+	HMM Setting
 	{
 		StatusSet, 
 		ObservedSet, 
@@ -20,7 +20,7 @@ Title: Chinese word segmentation with HMM
 
 	--
 
-	###StatusSet:
+	StatusSet:
 	{
 		B: appear at the begin of a word
 		M: appear at middle of a word
@@ -28,7 +28,7 @@ Title: Chinese word segmentation with HMM
 		S: single char as a word
 	}
 
-	###Some Constriction:
+	Some Constriction:
 		B -> M|E
 		M -> M|E
 		E -> B|S
@@ -36,45 +36,50 @@ Title: Chinese word segmentation with HMM
 
 	--
 
-	###InitStatus:
+	InitStatus:
 		Prob, or log(prob)
 
 	--
 
-	###TransProbMatrix: by statistical method
+	TransProbMatrix: by statistical method
 		P(Status[i]|Status[i-1]) 
 
 	--
 
-	###EmitProbMatrix by statistical method
+	EmitProbMatrix by statistical method
 		P(Observed[i]|Status[j])
 
 
 
-2. Dataset
+###2. Dataset
 
 	A large set of addresses in Chinese
+	
 	Can be used for building standarized address database and geocoding
 
 
-3. How to obtain statistics of parameters
+###3. How to obtain statistics of parameters
 
 	THULAC
+
 	http://nlp.csai.tsinghua.edu.cn/site2/index.php/en/the-news/238-thulac-thutag
+
 	A well developed word seperation and tagging tool.
 
 
-4. Variations:
-	1).	Pure HMM
-	2).	With Dictionary
-	3). TBD
+###4. Variations:
+		1.	Pure HMM
+		2.	With Dictionary
+		3.	TBD
 
 
-5. Comparation to other word seperation methods
+###5. Comparation to other word seperation methods
+
 	TBD
 
 
-6. Reference:
+###6. Reference:
+
 	http://yanyiwu.com/work/2014/04/07/hmm-segment-xiangjie.html
 
 
