@@ -1,0 +1,180 @@
+How to run
+
+move all the files in folder testinput/trainoutput in each folders to the container folder
+
+
+HMM
+
+train 
+> python3 HMMwordsep.py train as_training.utf8
+> python3 HMMwordsep.py train cityu_training.utf8
+> python3 HMMwordsep.py train msr_training.utf8
+> python3 HMMwordsep.py train pku_training.utf8
+
+test
+> python3 HMMwordsep.py test as_test.utf8 as_training.utf8 			4409.9970703125 milliseconds.
+> python3 HMMwordsep.py test cityu_test.utf8 cityu_training.utf8 	1528.347900390625 milliseconds.
+> python3 HMMwordsep.py test msr_test.utf8 msr_training.utf8 		3760.35498046875 milliseconds.
+> python3 HMMwordsep.py test pku_test.utf8 pku_training.utf8 		3592.499755859375 milliseconds.
+
+
+
+
+Maximum Matching
+
+* first go to pymmseg/mmseg-cpp and then execute: python build.py
+
+train
+> python DictionaryMM.py train as_training.utf8
+> python DictionaryMM.py train cityu_training.utf8
+> python DictionaryMM.py train msr_training.utf8
+> python DictionaryMM.py train pku_training.utf8
+
+test
+> python DictionaryMM.py test as_test.utf8 as_training.utf8  		1411.71191406 milliseconds
+> python DictionaryMM.py test cityu_test.utf8 cityu_training.utf8 	412.389892578 milliseconds.
+> python DictionaryMM.py test msr_test.utf8 msr_training.utf8 		1148.32910156 milliseconds.
+> python DictionaryMM.py test pku_test.utf8 pku_training.utf8 		990.163085938 milliseconds.
+
+
+
+
+Dictionary + HMM
+
+* in order to be fair to other methods,
+* using the same training data generate a dictionary instead of its built-in dictionary
+* every time after generated the dict.txt in the training phase, 
+* move it into folder "jieba" so the system will take it as the default dictionary
+
+train
+> python DictplusHMM.py train as_training.utf8
+> python DictplusHMM.py train cityu_training.utf8
+> python DictplusHMM.py train msr_training.utf8
+> python DictplusHMM.py train pku_training.utf8
+
+test
+> python DictplusHMM.py test as_test.utf8							1894.97998047 milliseconds.
+> python DictplusHMM.py test cityu_test.utf8 						782.119140625 milliseconds
+> python DictplusHMM.py test msr_test.utf8 							2674.9050293 milliseconds.
+> python DictplusHMM.py test pku_test.utf8							2842.38891602 milliseconds.
+
+test without HMM
+> python DictplusHMM.py noHMM as_test.utf8							1701.37011719 milliseconds.
+> python DictplusHMM.py noHMM cityu_test.utf8 						662.127197266 milliseconds.
+> python DictplusHMM.py noHMM msr_test.utf8 						1439.25 milliseconds.
+> python DictplusHMM.py noHMM pku_test.utf8							1422.63696289 milliseconds.
+
+
+
+
+Maximum Entropy Model
+
+* maxent-master: need linux
+* ./configure, make, sudo make install
+* cd python, python setup.py install
+
+train
+* first, tagging the training file to the input format of MEM:
+> python character_tagging.py as_training.utf8 as_training.utf8.tagging
+> python character_tagging.py cityu_training.utf8 cityu_training.utf8.tagging
+> python character_tagging.py msr_training.utf8 msr_training.utf8.tagging
+> python character_tagging.py pku_training.utf8 pku_training.utf8.tagging
+
+* then, train with postrainer.py 	# takes a lot of time
+> ./maxent-master/example/postagger/postrainer.py -f as_training.utf8.tagging as_tagger.model
+> ./maxent-master/example/postagger/postrainer.py -f cityu_training.utf8.tagging cityu_tagger.model
+> ./maxent-master/example/postagger/postrainer.py -f msr_training.utf8.tagging msr_tagger.model
+> ./maxent-master/example/postagger/postrainer.py -f pku_training.utf8.tagging pku_tagger.model
+
+
+test
+* first, process the testing file to the input format of MEM
+> python character_split.py as_test.utf8 as_test.split.utf8
+> python character_split.py cityu_test.utf8 cityu_test.split.utf8
+> python character_split.py msr_test.utf8 msr_test.split.utf8
+> python character_split.py pku_test.utf8 pku_test.split.utf8
+
+* second, split the testing file
+> ./maxent-master/example/postagger/maxent_tagger.py -m as_tagger.model as_test.split.utf8 > as_test.split.tag.utf8  			10.072s
+> ./maxent-master/example/postagger/maxent_tagger.py -m cityu_tagger.model cityu_test.split.utf8 > cityu_test.split.tag.utf8	3.792s
+> ./maxent-master/example/postagger/maxent_tagger.py -m msr_tagger.model msr_test.split.utf8 > msr_test.split.tag.utf8 			10.332s
+> ./maxent-master/example/postagger/maxent_tagger.py -m pku_tagger.model pku_test.split.utf8 > pku_test.split.tag.utf8 			12.472s
+
+* third, reformat the splitted file to format that can be scored
+> python character_2_word.py as_test.split.tag.utf8 as_test.utf8.MEM
+> python character_2_word.py cityu_test.split.tag.utf8 cityu_test.utf8.MEM
+> python character_2_word.py msr_test.split.tag.utf8 msr_test.utf8.MEM
+> python character_2_word.py pku_test.split.tag.utf8 pku_test.utf8.MEM
+
+
+
+
+CRF
+
+* CRF++-0.58
+* ./configure, make, sudo make install
+* cd python, python setup.py build, python setup.py install
+
+train
+* first generate training file that are formatted for CRF
+> python make_crf_train_data.py as_training.utf8 as_training.tagging4crf.utf8
+> python make_crf_train_data.py cityu_training.utf8 cityu_training.tagging4crf.utf8
+> python make_crf_train_data.py msr_training.utf8 msr_training.tagging4crf.utf8
+> python make_crf_train_data.py pku_training.utf8 pku_training.tagging4crf.utf8
+
+* train the model
+* takes very long times, several hours
+> crf_learn -f 3 -c 4.0 template as_training.tagging4crf.utf8 as_crf_model
+> crf_learn -f 3 -c 4.0 template cityu_training.tagging4crf.utf8 cityu_crf_model
+> crf_learn -f 3 -c 4.0 template msr_training.tagging4crf.utf8 msr_crf_model
+> crf_learn -f 3 -c 4.0 template pku_training.tagging4crf.utf8 pku_crf_model
+
+
+test
+> python crf_segmenter.py as_crf_model as_test.utf8 as_test.utf8.CRF 				3206.51000977 milliseconds.
+> python crf_segmenter.py cityu_crf_model cityu_test.utf8 cityu_test.utf8.CRF 		1013.33984375 milliseconds.
+> python crf_segmenter.py msr_crf_model msr_test.utf8 msr_test.utf8.CRF 			2589.84985352 milliseconds.
+> python crf_segmenter.py pku_crf_model pku_test.utf8 pku_test.utf8.CRF 			1671.11035156 milliseconds.
+
+
+
+
+
+
+Scoring
+
+HMM
+> perl scripts/score gold/as_training_words.utf8 gold/as_testing_gold.utf8 as_test.utf8.HMM > as_test.HMM.ut8
+> perl scripts/score gold/cityu_training_words.utf8 gold/cityu_test_gold.utf8 cityu_test.utf8.HMM > cityu_test.HMM.ut8
+> perl scripts/score gold/msr_training_words.utf8 gold/msr_test_gold.utf8 msr_test.utf8.HMM > msr_test.HMM.ut8
+> perl scripts/score gold/pku_training_words.utf8 gold/pku_test_gold.utf8 pku_test.utf8.HMM > pku_test.HMM.ut8
+
+Maximum Matching
+> perl scripts/score gold/as_training_words.utf8 gold/as_testing_gold.utf8 as_test.utf8.mmseg > as_test.mmseg.ut8
+> perl scripts/score gold/cityu_training_words.utf8 gold/cityu_test_gold.utf8 cityu_test.utf8.mmseg > cityu_test.mmseg.ut8
+> perl scripts/score gold/msr_training_words.utf8 gold/msr_test_gold.utf8 msr_test.utf8.mmseg > msr_test.mmseg.ut8
+> perl scripts/score gold/pku_training_words.utf8 gold/pku_test_gold.utf8 pku_test.utf8.mmseg > pku_test.mmseg.ut8
+
+Dictionary + HMM
+> perl scripts/score gold/as_training_words.utf8 gold/as_testing_gold.utf8 as_test.utf8.plus > as_test.plus.ut8
+> perl scripts/score gold/cityu_training_words.utf8 gold/cityu_test_gold.utf8 cityu_test.utf8.plus > cityu_test.plus.ut8
+> perl scripts/score gold/msr_training_words.utf8 gold/msr_test_gold.utf8 msr_test.utf8.plus > msr_test.plus.ut8
+> perl scripts/score gold/pku_training_words.utf8 gold/pku_test_gold.utf8 pku_test.utf8.plus > pku_test.plus.ut8
+
+Dictionary without HMM
+> perl scripts/score gold/as_training_words.utf8 gold/as_testing_gold.utf8 as_test.utf8.no > as_test.no.ut8
+> perl scripts/score gold/cityu_training_words.utf8 gold/cityu_test_gold.utf8 cityu_test.utf8.no > cityu_test.no.ut8
+> perl scripts/score gold/msr_training_words.utf8 gold/msr_test_gold.utf8 msr_test.utf8.no > msr_test.no.ut8
+> perl scripts/score gold/pku_training_words.utf8 gold/pku_test_gold.utf8 pku_test.utf8.no > pku_test.no.ut8
+
+Maximum Entropy Model
+> perl scripts/score gold/as_training_words.utf8 gold/as_testing_gold.utf8 as_test.utf8.MEM > as_test.MEM.ut8
+> perl scripts/score gold/cityu_training_words.utf8 gold/cityu_test_gold.utf8 cityu_test.utf8.MEM > cityu_test.MEM.ut8
+> perl scripts/score gold/msr_training_words.utf8 gold/msr_test_gold.utf8 msr_test.utf8.MEM > msr_test.MEM.ut8
+> perl scripts/score gold/pku_training_words.utf8 gold/pku_test_gold.utf8 pku_test.utf8.MEM > pku_test.MEM.ut8
+
+CRF
+> perl scripts/score gold/as_training_words.utf8 gold/as_testing_gold.utf8 as_test.utf8.CRF > as_test.CRF.ut8
+> perl scripts/score gold/cityu_training_words.utf8 gold/cityu_test_gold.utf8 cityu_test.utf8.CRF > cityu_test.CRF.ut8
+> perl scripts/score gold/msr_training_words.utf8 gold/msr_test_gold.utf8 msr_test.utf8.CRF > msr_test.CRF.ut8
+> perl scripts/score gold/pku_training_words.utf8 gold/pku_test_gold.utf8 pku_test.utf8.CRF > pku_test.CRF.ut8
